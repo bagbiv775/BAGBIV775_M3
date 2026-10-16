@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: shop
+          POSTGRES_USER: shop
+          POSTGRES_PASSWORD: shop
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U shop"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DJANGO_SECRET_KEY: ci-only-secret-key-that-is-long-enough-for-hmac-sha256
+      DJANGO_DEBUG: "1"
+      POSTGRES_DB: shop
+      POSTGRES_USER: shop
+      POSTGRES_PASSWORD: shop
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: "5432"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.14"
+          enable-cache: true
+      - name: Install dependencies
+        run: uv sync --locked
+      - name: Ruff (lint)
+        run: uv run ruff check .
+      - name: Ruff (format)
+        run: uv run ruff format --check .
+      - name: Mypy
+        run: uv run mypy .
+      - name: Migrations are up to date
+        run: uv run python manage.py makemigrations --check --dry-run
+      - name: Tests
+        run: uv run pytest --cov --cov-report=term --cov-fail-under=80
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: checks
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and start the stack
+        run: |
+          cp .env.example .env
+          docker compose up --build -d
+      - name: Smoke test
+        run: |
+          for i in $(seq 1 30); do
+            curl -fsS http://localhost:8000/ > /dev/null && break
+            sleep 2
+          done
+          curl -fsS http://localhost:8000/api/products/ | grep -q '"count"'
+          curl -fsS http://localhost:8000/api/docs/ > /dev/null
+      - name: Logs on failure
+        if: failure()
+        run: docker compose logs
+      - name: Stop
+        if: always()
+        run: docker compose down -v
