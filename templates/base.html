@@ -1,0 +1,85 @@
+{% load static %}<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Каталог{% endblock %} | Hop &amp; Barley</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/shop.css' %}">
+    <link rel="icon" href="{% static 'img/logo.svg' %}" type="image/svg+xml">
+</head>
+<body class="{% if user.is_authenticated %}user-logged-in{% endif %} {% block body_class %}{% endblock %}">
+<header>
+    <div class="header-container">
+        <a href="{% url 'products:home' %}" class="header__logo">
+            <img src="{% static 'img/logo.svg' %}" alt="Hop & Barley">
+            <p class="logo-text">Hop &amp; Barley</p>
+        </a>
+        <nav class="header__nav">
+            <ul>
+                <li><a href="{% url 'products:catalog' %}">Каталог</a></li>
+                <li><a href="{% url 'orders:cart' %}">Корзина</a></li>
+                {% if user.is_authenticated %}<li><a href="{% url 'users:account' %}">Мои заказы</a></li>{% endif %}
+                {% if user.is_staff %}<li><a href="{% url 'admin:index' %}">Админка</a></li>{% endif %}
+            </ul>
+        </nav>
+
+        {% if not user.is_authenticated %}
+        <div class="header__auth-buttons">
+            <a href="{% url 'orders:cart' %}" class="cart-icon" aria-label="Корзина">
+                <img src="{% static 'img/icons/Shopping_bag.svg' %}" alt="">
+                {% if cart_count %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}
+            </a>
+            <a href="{% url 'users:login' %}?next={{ request.get_full_path|urlencode }}" class="button button--secondary">Войти</a>
+            <a href="{% url 'users:register' %}" class="button button--primary">Регистрация</a>
+        </div>
+        {% else %}
+        <div class="header__user-actions">
+            <a href="{% url 'users:account' %}" class="user-icon" aria-label="Личный кабинет" title="{{ user.username }}">
+                <img src="{% static 'img/icons/User_alt.svg' %}" alt="">
+            </a>
+            <a href="{% url 'orders:cart' %}" class="cart-icon" aria-label="Корзина">
+                <img src="{% static 'img/icons/Shopping_bag.svg' %}" alt="">
+                {% if cart_count %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}
+            </a>
+            <form method="post" action="{% url 'users:logout' %}" class="inline-form">
+                {% csrf_token %}
+                <button type="submit" class="button button--secondary button--small">Выйти</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</header>
+
+{% if messages %}
+    <div class="messages container">
+        {% for message in messages %}
+            <div class="message message--{{ message.tags }}" role="status">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<main class="{% block main_class %}{% endblock %}">
+    {% block content %}{% endblock %}
+</main>
+
+<footer>
+    <img src="{% static 'img/background/image-footer.svg' %}" alt="" class="footer__hops-logo">
+    <nav class="footer__nav">
+        <ul>
+            <li><a href="{% url 'products:catalog' %}">Каталог</a></li>
+            <li><a href="{% url 'orders:cart' %}">Корзина</a></li>
+            <li><a href="{% url 'users:account' %}">Личный кабинет</a></li>
+            <li><a href="/api/docs/">API</a></li>
+        </ul>
+    </nav>
+    <p class="footer__copyright">© Hop &amp; Barley {% now "Y" %}. Учебный проект</p>
+</footer>
+
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

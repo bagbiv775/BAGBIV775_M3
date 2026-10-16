@@ -1,0 +1,16 @@
+{% extends 'users/_auth_layout.html' %}
+{% block title %}Вход{% endblock %}
+{% block auth_content %}
+<div class="Legend"><h1 class="auth-title">Вход</h1></div>
+<form method="post" class="auth-form" novalidate>
+    {% csrf_token %}
+    {% include 'includes/form_errors.html' %}
+    {% include 'includes/form_field.html' with field=form.username %}
+    {% include 'includes/form_field.html' with field=form.password %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <div class="ButtonGroup">
+        <button type="submit" class="button button--primary">Войти</button>
+    </div>
+</form>
+<p class="auth-switch">Нет аккаунта? <a href="{% url 'users:register' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Зарегистрироваться</a></p>
+{% endblock %}

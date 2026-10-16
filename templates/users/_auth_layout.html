@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main_class %}auth-page-wrapper{% endblock %}
+{% block content %}
+<div class="auth-background">
+    <img src="{% static 'img/background/pattern.jpg' %}" alt="">
+</div>
+<div class="auth-form-container">
+    <div class="auth-container auth-container--login">
+        {% block auth_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

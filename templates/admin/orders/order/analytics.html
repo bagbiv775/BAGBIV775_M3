@@ -1,0 +1,91 @@
+{% extends 'admin/base_site.html' %}
+{% load shop_tags %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .kpi { border: 1px solid var(--hairline-color); border-radius: 6px; padding: 16px; }
+    .kpi__label { color: var(--body-quiet-color); font-size: 13px; }
+    .kpi__value { font-size: 26px; font-weight: 600; margin-top: 4px; }
+    .analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; }
+    .analytics-grid table { width: 100%; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumbs">
+    <li><a href="{% url 'admin:index' %}">Начало</a></li>
+    <li><a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a></li>
+    <li><a href="{% url 'admin:orders_order_changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a></li>
+    <li aria-current="page">{{ title }}</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<p>Выручка, средний чек и топ-продуктов считаются по заказам в статусах «Оплачен», «Отправлен» и «Доставлен».</p>
+
+<div class="kpi-grid">
+    <div class="kpi"><div class="kpi__label">Выручка</div><div class="kpi__value">{{ summary.revenue|money }}</div></div>
+    <div class="kpi"><div class="kpi__label">Средний чек</div><div class="kpi__value">{{ summary.average_order_value|money }}</div></div>
+    <div class="kpi"><div class="kpi__label">Оплаченных заказов</div><div class="kpi__value">{{ summary.sold_orders }}</div></div>
+    <div class="kpi"><div class="kpi__label">Всего заказов</div><div class="kpi__value">{{ summary.total_orders }}</div></div>
+    <div class="kpi"><div class="kpi__label">Покупателей / повторных</div><div class="kpi__value">{{ customers.buyers }} / {{ customers.repeat_buyers }}</div></div>
+</div>
+
+<div class="analytics-grid">
+    <div class="module">
+        <h2>Заказы по статусам</h2>
+        <table>
+            <thead><tr><th>Статус</th><th>Количество</th></tr></thead>
+            <tbody>
+            {% for value, label, count in by_status %}
+                <tr><td><a href="{% url 'admin:orders_order_changelist' %}?status__exact={{ value }}">{{ label }}</a></td><td>{{ count }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="module">
+        <h2>Топ продуктов (продано единиц)</h2>
+        <table>
+            <thead><tr><th>Товар</th><th>Категория</th><th>Продано</th></tr></thead>
+            <tbody>
+            {% for product in top_products %}
+                <tr><td><a href="{% url 'admin:products_product_change' product.pk %}">{{ product.name }}</a></td><td>{{ product.category.name }}</td><td>{{ product.popularity }}</td></tr>
+            {% empty %}
+                <tr><td colspan="3">Продаж пока нет.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="module">
+        <h2>Выручка за 30 дней</h2>
+        <table>
+            <thead><tr><th>День</th><th>Заказов</th><th>Выручка</th></tr></thead>
+            <tbody>
+            {% for row in daily %}
+                <tr><td>{{ row.day|date:'d.m.Y' }}</td><td>{{ row.orders }}</td><td>{{ row.revenue|money }}</td></tr>
+            {% empty %}
+                <tr><td colspan="3">Нет оплаченных заказов за период.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="module">
+        <h2>Заканчиваются на складе</h2>
+        <table>
+            <thead><tr><th>Товар</th><th>Остаток</th></tr></thead>
+            <tbody>
+            {% for product in low_stock %}
+                <tr><td><a href="{% url 'admin:products_product_change' product.pk %}">{{ product.name }}</a></td><td>{{ product.stock }}</td></tr>
+            {% empty %}
+                <tr><td colspan="2">Все товары в достатке.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

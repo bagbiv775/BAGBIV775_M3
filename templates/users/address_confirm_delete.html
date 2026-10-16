@@ -1,0 +1,13 @@
+{% extends 'users/_account_layout.html' %}
+{% block title %}Удалить адрес{% endblock %}
+{% block account_content %}
+<div class="account-form-container">
+    <h2 class="account-form-title">Удалить адрес «{{ object.label }}»?</h2>
+    <p>{{ object.city }}, {{ object.address }}</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="button button--danger button--full-width">Удалить</button>
+        <a href="{% url 'users:addresses' %}" class="button button--secondary button--full-width">Отмена</a>
+    </form>
+</div>
+{% endblock %}

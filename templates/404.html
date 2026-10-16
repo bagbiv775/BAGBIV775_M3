@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Страница не найдена{% endblock %}
+{% block content %}
+<div class="container empty-state">
+    <i class="fa-solid fa-compass"></i>
+    <h1>404 — страница не найдена</h1>
+    <p>Возможно, товар снят с продажи или ссылка устарела.</p>
+    <a href="{% url 'products:catalog' %}" class="button button--primary">В каталог</a>
+</div>
+{% endblock %}

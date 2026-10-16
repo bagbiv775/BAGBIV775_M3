@@ -1,0 +1,18 @@
+.idea
+.venv
+__pycache__
+
+.env
+
+# Python / tooling
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Django
+/media/
+/staticfiles/
+db.sqlite3

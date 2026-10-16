@@ -1,0 +1,1 @@
+{% load shop_tags %}{% if rating is None %}<span class="rating rating--empty">Нет оценок</span>{% else %}<span class="rating" title="{{ rating|floatformat:1 }} из 5" aria-label="Оценка {{ rating|floatformat:1 }} из 5">{% for filled in rating|stars %}<span class="star{% if not filled %} star--empty{% endif %}" aria-hidden="true">★</span>{% endfor %}</span>{% endif %}

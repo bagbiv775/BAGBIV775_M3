@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Заказ №{{ order.pk }}{% endblock %}
+{% block main_class %}account-page-wrapper{% endblock %}
+
+{% block content %}
+<div class="account-container">
+    <p><a href="{% url 'users:account' %}" class="back-link"><i class="fa-solid fa-arrow-left"></i> Все заказы</a></p>
+    <h1 class="account-form-title">Заказ №{{ order.pk }} {% include 'includes/order_status.html' %}</h1>
+    <p class="muted">Оформлен {{ order.created_at|date:'d.m.Y H:i' }}</p>
+
+    {% include 'orders/_order_items.html' %}
+
+    <dl class="order-meta">
+        <dt>Способ оплаты</dt><dd>{{ order.get_payment_method_display }}</dd>
+        <dt>Получатель</dt><dd>{{ order.contact_name|default:'—' }}{% if order.contact_phone %}, {{ order.contact_phone }}{% endif %}</dd>
+        <dt>Адрес</dt><dd>{{ order.shipping_address }}</dd>
+    </dl>
+
+    {% if order.can_be_cancelled_by_customer %}
+        <form method="post" action="{% url 'orders:cancel' order.pk %}" onsubmit="return confirm('Отменить заказ №{{ order.pk }}?');">
+            {% csrf_token %}
+            <button type="submit" class="button button--danger">Отменить заказ</button>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}

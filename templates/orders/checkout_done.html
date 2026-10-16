@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Заказ оформлен{% endblock %}
+{% block main_class %}checkout-page-wrapper{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+    <div class="success-banner">
+        <i class="fa-solid fa-circle-check"></i>
+        <h1 class="checkout-title">Спасибо! Заказ №{{ order.pk }} оформлен</h1>
+        <p>Статус: {% include 'includes/order_status.html' %}. Мы отправили подтверждение на вашу почту.</p>
+    </div>
+
+    {% include 'orders/_order_items.html' %}
+
+    <dl class="order-meta">
+        <dt>Способ оплаты</dt><dd>{{ order.get_payment_method_display }}</dd>
+        <dt>Получатель</dt><dd>{{ order.contact_name }}, {{ order.contact_phone }}</dd>
+        <dt>Адрес</dt><dd>{{ order.shipping_address }}</dd>
+    </dl>
+
+    <div class="button-row">
+        <a href="{{ order.get_absolute_url }}" class="button button--secondary">Детали заказа</a>
+        <a href="{% url 'products:catalog' %}" class="button button--primary">Продолжить покупки</a>
+    </div>
+</div>
+{% endblock %}

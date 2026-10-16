@@ -1,0 +1,25 @@
+{% extends 'users/_account_layout.html' %}
+{% block title %}Адреса доставки{% endblock %}
+{% block account_content %}
+<div class="section-header">
+    <h2 class="account-form-title">Сохранённые адреса</h2>
+    <a href="{% url 'users:address_add' %}" class="button button--primary button--small"><i class="fa-solid fa-plus"></i>&nbsp;Добавить</a>
+</div>
+{% if addresses %}
+    <div class="address-list">
+        {% for address in addresses %}
+            <article class="address-card">
+                <h3>{{ address.label }}</h3>
+                <p>{{ address.full_name }}, {{ address.phone }}</p>
+                <p>{{ address.city }}, {{ address.address }}</p>
+                <div class="button-row">
+                    <a href="{% url 'users:address_edit' address.pk %}" class="button button--secondary button--small">Изменить</a>
+                    <a href="{% url 'users:address_delete' address.pk %}" class="button button--secondary button--small">Удалить</a>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="muted">Адресов пока нет. Их можно сохранить при оформлении заказа или добавить здесь.</p>
+{% endif %}
+{% endblock %}

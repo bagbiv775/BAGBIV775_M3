@@ -1,0 +1,9 @@
+{% load shop_tags %}{% autoescape off %}Новый заказ №{{ order.pk }} от {{ order.user.username }} ({{ order.user.email|default:"email не указан" }}).
+
+{% for item in items %}  • {{ item.product.name }} — {{ item.quantity }} × {{ item.price|money }}
+{% endfor %}
+Итого: {{ order.total_price|money }}
+Способ оплаты: {{ order.get_payment_method_display }}
+Получатель: {{ order.contact_name|default:"—" }}, {{ order.contact_phone|default:"—" }}
+Адрес доставки: {{ order.shipping_address }}
+{% endautoescape %}

@@ -1,0 +1,14 @@
+{% extends 'users/_account_layout.html' %}
+{% block title %}{% if object %}Изменить адрес{% else %}Новый адрес{% endif %}{% endblock %}
+{% block account_content %}
+<div class="account-form-container">
+    <h2 class="account-form-title">{% if object %}Изменить адрес{% else %}Новый адрес{% endif %}</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% include 'includes/form_errors.html' %}
+        {% for field in form %}{% include 'includes/form_field.html' %}{% endfor %}
+        <button type="submit" class="button button--primary button--full-width">Сохранить</button>
+        <a href="{% url 'users:addresses' %}" class="button button--secondary button--full-width">Отмена</a>
+    </form>
+</div>
+{% endblock %}

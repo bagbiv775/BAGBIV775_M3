@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load shop_tags %}
+
+{% block title %}Корзина{% endblock %}
+{% block main_class %}cart-page-wrapper{% endblock %}
+
+{% block content %}
+<div class="cart-container">
+    <h1 class="cart-title">Корзина</h1>
+
+    {% if items %}
+        <div class="cart-items-list">
+            {% for item in items %}
+                <div class="cart-item{% if item.problem %} cart-item--problem{% endif %}">
+                    {% if item.product.image %}
+                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="cart-item__image">
+                    {% else %}
+                        <div class="cart-item__image product-card__image--placeholder"><i class="fa-solid fa-wheat-awn"></i></div>
+                    {% endif %}
+                    <div class="cart-item__body">
+                        <div class="cart-item__details">
+                            <h2 class="cart-item__name">
+                                {% if item.product.is_active %}<a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a>{% else %}{{ item.product.name }}{% endif %}
+                            </h2>
+                            <div class="cart-item__price-info">
+                                <p class="cart-item__price">{{ item.line_total|money }}</p>
+                                <span class="cart-item__price-tag">{{ item.product.price|money }} × {{ item.quantity }}</span>
+                            </div>
+                            {% if item.problem %}<p class="field-error">{{ item.problem }}</p>{% endif %}
+                        </div>
+                        <div class="cart-item__actions">
+                            <form method="post" action="{% url 'orders:cart_update' item.product.pk %}" class="cart-item__quantity-selector">
+                                {% csrf_token %}
+                                <button type="submit" name="quantity" value="{{ item.quantity|add:'-1' }}" class="quantity-btn-cart" aria-label="Уменьшить">−</button>
+                                <span class="quantity-value-cart">{{ item.quantity }}</span>
+                                <button type="submit" name="quantity" value="{{ item.quantity|add:'1' }}" class="quantity-btn-cart" aria-label="Увеличить"{% if item.quantity >= item.product.stock %} disabled{% endif %}>+</button>
+                            </form>
+                            <form method="post" action="{% url 'orders:cart_update' item.product.pk %}" class="cart-item__set-quantity">
+                                {% csrf_token %}
+                                <input type="number" name="quantity" value="{{ item.quantity }}" min="0" max="{{ item.product.stock }}" class="Input Input--small" aria-label="Количество">
+                                <button type="submit" class="button button--secondary button--small">OK</button>
+                            </form>
+                            <form method="post" action="{% url 'orders:cart_remove' item.product.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="button--remove">Удалить <i class="fa-solid fa-xmark"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="cart-summary">
+            <div class="cart-summary__total">
+                <p>Итого</p>
+                <p>{{ total|money }}</p>
+            </div>
+            {% if has_problems %}
+                <p class="field-error">Исправьте позиции, отмеченные красным, чтобы оформить заказ.</p>
+            {% else %}
+                <a href="{% url 'orders:checkout' %}" class="button button--primary button--checkout">Оформить заказ</a>
+            {% endif %}
+            {% if not user.is_authenticated %}<p class="muted">Для оформления заказа нужно войти — корзина сохранится.</p>{% endif %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fa-solid fa-basket-shopping"></i>
+            <p>Корзина пуста.</p>
+            <a href="{% url 'products:catalog' %}" class="button button--primary">Перейти в каталог</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

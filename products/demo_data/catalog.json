@@ -1,0 +1,35 @@
+{
+  "categories": [
+    {"slug": "hops", "name": "Хмель"},
+    {"slug": "malts", "name": "Солод"},
+    {"slug": "yeast", "name": "Дрожжи"},
+    {"slug": "adjuncts", "name": "Несоложёное сырьё"},
+    {"slug": "kits", "name": "Наборы для варки"}
+  ],
+  "products": [
+    {"slug": "citra-hops", "name": "Хмель Citra, 100 г", "category": "hops", "price": "5.99", "stock": 40, "image": "citra_hops.jpg",
+     "description": "Один из самых востребованных ароматных сортов. Яркие ноты грейпфрута, лайма, маракуйи и личи.\nИдеален для IPA, Pale Ale и американского пшеничного. Гранулы T-90 в вакуумной упаковке."},
+    {"slug": "maris-otter-malt", "name": "Солод Maris Otter Pale, 1 кг", "category": "malts", "price": "2.50", "stock": 120, "image": "maris_otter_malt.jpg",
+     "description": "Классический британский базовый солод с насыщенным бисквитным вкусом.\nОснова для биттеров, портеров и традиционных английских элей."},
+    {"slug": "safale-us05-yeast", "name": "Дрожжи SafAle US-05", "category": "yeast", "price": "3.25", "stock": 60, "image": "safale_us05_yeast.jpg",
+     "description": "Сухие элевые дрожжи с чистым, нейтральным профилем брожения.\nПрощают ошибки с температурой — отличный выбор для начинающих пивоваров."},
+    {"slug": "cascade-hops", "name": "Хмель Cascade, 100 г", "category": "hops", "price": "7.49", "stock": 35, "image": "cascade_hops.jpg",
+     "description": "Легендарный американский хмель с цветочно-цитрусовым ароматом.\nОтлично подходит для сухого охмеления американских элей."},
+    {"slug": "caramel-malt-60l", "name": "Солод карамельный 60L, 1 кг", "category": "malts", "price": "3.00", "stock": 80, "image": "caramel_malt.jpg",
+     "description": "Добавляет карамельную сладость, янтарный цвет и улучшает пеностойкость.\nИспользуйте до 15% засыпи в тёмных и янтарных сортах."},
+    {"slug": "saaz-hops", "name": "Хмель Saaz, 100 г", "category": "hops", "price": "4.75", "stock": 25, "image": "saaz_hops.jpg",
+     "description": "Благородный чешский хмель с мягким пряным и травянистым ароматом.\nНезаменим для богемского пилснера и классических лагеров."},
+    {"slug": "pilsner-malt", "name": "Солод Pilsner, 1 кг", "category": "malts", "price": "2.20", "stock": 150, "image": "pilsner_malt.jpg",
+     "description": "Светлый базовый солод с чистым зерновым вкусом.\nОснова для лагеров, пилснеров, бельгийских элей и пшеничного пива."},
+    {"slug": "imperial-yeast-a07", "name": "Дрожжи Imperial Organic A07", "category": "yeast", "price": "8.99", "stock": 15, "image": "imperial_yeast.jpg",
+     "description": "Жидкие органические дрожжи для американских элей.\nПодчёркивают цитрусовый хмелевой характер и дают сухой финиш."},
+    {"slug": "centennial-hops", "name": "Хмель Centennial, 100 г", "category": "hops", "price": "6.20", "stock": 30, "image": "centennial_hops.jpg",
+     "description": "Его называют «супер-каскадом»: цветочные и лимонные ноты при высокой горечи.\nУниверсален — подходит и для горечи, и для аромата."},
+    {"slug": "mosaic-hops", "name": "Хмель Mosaic, 100 г", "category": "hops", "price": "9.50", "stock": 20, "image": "mosaic_hops.jpg",
+     "description": "Сложный аромат тропических фруктов, черники и хвои.\nЗвезда современных IPA и NEIPA."},
+    {"slug": "west-coast-ipa-kit", "name": "Набор West Coast IPA (зерновой)", "category": "kits", "price": "60.00", "stock": 8, "image": "ipa_kit.jpg",
+     "description": "Всё для 20 литров West Coast IPA: солод, хмель Citra и Cascade, дрожжи US-05 и подробный рецепт.\nОтличный первый проект для полнозерновой варки."},
+    {"slug": "unmalted-wheat", "name": "Пшеница несоложёная, 1 кг", "category": "adjuncts", "price": "1.80", "stock": 70, "image": "unmalted_wheat.jpg",
+     "description": "Придаёт мутность, сливочное тело и стойкую пену.\nКлассический ингредиент бельгийского витбира."}
+  ]
+}

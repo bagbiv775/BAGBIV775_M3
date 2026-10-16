@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load shop_tags %}
+
+{% block title %}{{ product.name }}{% endblock %}
+{% block main_class %}page-product{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav class="breadcrumbs">
+        <a href="{% url 'products:catalog' %}">Каталог</a> /
+        <a href="{% url 'products:catalog' %}?category={{ product.category.slug }}">{{ product.category.name }}</a> /
+        <span>{{ product.name }}</span>
+    </nav>
+
+    <section class="product-details-section">
+        <div class="product-image-container">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+            {% else %}
+                <div class="product-image product-card__image--placeholder"><i class="fa-solid fa-wheat-awn"></i></div>
+            {% endif %}
+        </div>
+        <div class="product-info-column">
+            <div class="product-title-price">
+                <h1 class="product-name">{{ product.name }}</h1>
+                <div class="price-section">
+                    <p class="product-price">{{ product.price|money }}</p>
+                </div>
+            </div>
+
+            <div class="product-rating-summary">
+                {% if product.avg_rating is not None %}
+                    {% include 'includes/rating.html' with rating=product.avg_rating %}
+                    <strong>{{ product.avg_rating|floatformat:1 }}</strong>
+                    <span class="muted">({{ reviews|length }} отз.)</span>
+                {% else %}
+                    <span class="muted">Нет оценок</span>
+                {% endif %}
+            </div>
+
+            <div class="product-description">
+                {{ product.description|linebreaks }}
+            </div>
+
+            <p class="stock-info">
+                {% if product.stock > 0 %}
+                    <i class="fa-solid fa-check"></i> В наличии: {{ product.stock }} шт.
+                {% else %}
+                    <i class="fa-solid fa-xmark"></i> Нет в наличии
+                {% endif %}
+                {% if cart_quantity %}<span class="muted"> · в корзине {{ cart_quantity }} шт.</span>{% endif %}
+            </p>
+
+            {% if product.stock > 0 %}
+                <form method="post" action="{% url 'orders:cart_add' product.pk %}" class="cart-controls add-to-cart-form">
+                    {% csrf_token %}
+                    <label for="{{ add_to_cart_form.quantity.id_for_label }}" class="visually-hidden">Количество</label>
+                    {{ add_to_cart_form.quantity }}
+                    <button type="submit" class="button button--primary add-to-cart-button">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span>Добавить в корзину</span>
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="accordion-section">
+        <div class="accordion-item">
+            <div class="accordion-title">
+                <h3>Характеристики</h3>
+                <i class="fa-solid fa-chevron-down accordion-icon"></i>
+            </div>
+            <div class="accordion-content">
+                <ul>
+                    <li><strong>Категория:</strong> {{ product.category.name }}</li>
+                    <li><strong>Артикул:</strong> {{ product.slug }}</li>
+                    <li><strong>Остаток на складе:</strong> {{ product.stock }} шт.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="reviews-section" id="reviews">
+        <h2 class="reviews-title">Отзывы</h2>
+
+        {% if reviews %}
+            <div class="reviews-grid">
+                {% for review in reviews %}
+                    <article class="review-card">
+                        <div class="review-rating">{% include 'includes/rating.html' with rating=review.rating %}</div>
+                        <div class="review-body">
+                            <p class="review-text">{{ review.comment|linebreaksbr }}</p>
+                        </div>
+                        <div class="review-author">
+                            <span class="author-avatar author-avatar--initial">{{ review.user.username|first|upper }}</span>
+                            <span class="author-name">{{ review.user.username }}</span>
+                            <time class="muted" datetime="{{ review.created_at|date:'c' }}">{{ review.created_at|date:'d.m.Y' }}</time>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="muted">Отзывов пока нет.</p>
+        {% endif %}
+
+        <div class="review-form-block">
+            <h3>Оставить отзыв</h3>
+            {% if review_form %}
+                <form method="post" action="{% url 'reviews:create' product.slug %}" class="review-form">
+                    {% csrf_token %}
+                    <fieldset class="rating-input">
+                        <legend>{{ review_form.rating.label }}</legend>
+                        {% for radio in review_form.rating %}
+                            <label class="rating-input__option">{{ radio.tag }}<span>{{ radio.choice_label }} <span class="star">★</span></span></label>
+                        {% endfor %}
+                    </fieldset>
+                    {% include 'includes/form_field.html' with field=review_form.comment %}
+                    <button type="submit" class="button button--primary">Отправить отзыв</button>
+                </form>
+            {% elif not user.is_authenticated %}
+                <p class="muted"><a href="{% url 'users:login' %}?next={{ request.path|urlencode }}">Войдите</a>, чтобы оставить отзыв. Отзывы доступны покупателям, получившим товар.</p>
+            {% else %}
+                <p class="muted">{{ review_denial_reason }}</p>
+            {% endif %}
+        </div>
+    </section>
+
+    {% if related_products %}
+        <section class="related-section">
+            <h2 class="reviews-title">Из той же категории</h2>
+            <div class="product-grid product-grid--compact">
+                {% for item in related_products %}
+                    <a href="{{ item.get_absolute_url }}" class="product-card-link">
+                        <div class="product-card">
+                            {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.name }}" class="product-card__image" loading="lazy">{% endif %}
+                            <div class="product-card__info">
+                                <h4 class="product-card__name">{{ item.name }}</h4>
+                                <p class="product-card__price">{{ item.price|money }}</p>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+</div>
+{% endblock %}

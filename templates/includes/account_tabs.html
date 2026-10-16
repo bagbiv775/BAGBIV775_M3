@@ -1,0 +1,6 @@
+<nav class="account-tabs">
+    <a href="{% url 'users:account' %}" class="account-tab{% if active_tab == 'orders' %} active{% endif %}">Мои заказы</a>
+    <a href="{% url 'users:profile' %}" class="account-tab{% if active_tab == 'profile' %} active{% endif %}">Профиль</a>
+    <a href="{% url 'users:addresses' %}" class="account-tab{% if active_tab == 'addresses' %} active{% endif %}">Адреса</a>
+    <a href="{% url 'users:password_change' %}" class="account-tab{% if active_tab == 'password' %} active{% endif %}">Пароль</a>
+</nav>

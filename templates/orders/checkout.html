@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load shop_tags %}
+
+{% block title %}Оформление заказа{% endblock %}
+{% block main_class %}checkout-page-wrapper{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+    <h1 class="checkout-title">Оформление заказа</h1>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% include 'includes/form_errors.html' %}
+
+        <section class="checkout-section">
+            <h2 class="checkout-section__title">Доставка</h2>
+            {% if saved_addresses %}
+                <div class="saved-addresses">
+                    <span class="muted">Заполнить из сохранённого адреса:</span>
+                    {% for address in saved_addresses %}
+                        <a href="?address={{ address.pk }}" class="keyword-tag">{{ address.label }}</a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% include 'includes/form_field.html' with field=form.full_name %}
+            {% include 'includes/form_field.html' with field=form.phone %}
+            {% include 'includes/form_field.html' with field=form.city %}
+            {% include 'includes/form_field.html' with field=form.address %}
+            <label class="checkbox-container checkbox-container--inline">{{ form.save_address.label }}
+                {{ form.save_address }}
+                <span class="checkmark"></span>
+            </label>
+        </section>
+
+        <section class="checkout-section">
+            <h2 class="checkout-section__title">Способ оплаты</h2>
+            <p class="muted">Оплата условная: деньги не списываются, статус «Оплачен» выставляет администратор.</p>
+            <div class="payment-options">
+                {% for radio in form.payment_method %}
+                    <label class="radio-option">
+                        {{ radio.tag }}
+                        <span class="radio-custom"></span>
+                        <span class="radio-label">{{ radio.choice_label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+            {% for error in form.payment_method.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+        </section>
+
+        <section class="checkout-summary">
+            <h2 class="checkout-section__title">Ваш заказ</h2>
+            <ul class="summary-items">
+                {% for item in items %}
+                    <li><span>{{ item.product.name }} × {{ item.quantity }}</span><span>{{ item.line_total|money }}</span></li>
+                {% endfor %}
+            </ul>
+            <div class="summary-details">
+                <div class="summary-total">
+                    <p>Итого</p>
+                    <p>{{ total|money }}</p>
+                </div>
+                <button type="submit" class="button button--primary button--pay">Подтвердить заказ</button>
+            </div>
+        </section>
+    </form>
+</div>
+{% endblock %}

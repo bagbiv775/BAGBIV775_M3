@@ -1,0 +1,38 @@
+{% extends 'users/_account_layout.html' %}
+{% load shop_tags %}
+{% block title %}Мои заказы{% endblock %}
+{% block account_content %}
+<form method="get" class="inline-filter">
+    {{ filter_form.status }}
+    <button type="submit" class="button button--secondary button--small">Показать</button>
+</form>
+
+{% if orders %}
+    <div class="order-history-table">
+        <div class="order-table-header">
+            <div class="order-table-cell">Заказ</div>
+            <div class="order-table-cell">Статус</div>
+            <div class="order-table-cell">Сумма</div>
+        </div>
+        <div class="order-table-body">
+            {% for order in orders %}
+                <a href="{{ order.get_absolute_url }}" class="order-table-row">
+                    <div class="order-table-cell">
+                        <span class="order-id">№{{ order.pk }}</span>
+                        <span class="order-date">{{ order.created_at|date:'d.m.Y' }} · {{ order.items_count|default:0 }} шт.</span>
+                    </div>
+                    <div class="order-table-cell">{% include 'includes/order_status.html' %}</div>
+                    <div class="order-table-cell"><span class="order-total">{{ order.total_price|money }}</span></div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% include 'includes/pagination.html' %}
+{% else %}
+    <div class="empty-state">
+        <i class="fa-solid fa-receipt"></i>
+        <p>Заказов пока нет.</p>
+        <a href="{% url 'products:catalog' %}" class="button button--primary">Перейти в каталог</a>
+    </div>
+{% endif %}
+{% endblock %}

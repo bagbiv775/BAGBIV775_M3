@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block main_class %}account-page-wrapper{% endblock %}
+{% block content %}
+<div class="account-container">
+    <h1 class="account-heading">Личный кабинет <span class="muted">· {{ user.username }}</span></h1>
+    {% include 'includes/account_tabs.html' %}
+    <div class="tab-content">
+        {% block account_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

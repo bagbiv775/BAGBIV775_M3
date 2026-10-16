@@ -1,0 +1,14 @@
+{% load shop_tags %}{% autoescape off %}Здравствуйте, {{ order.user.get_full_name|default:order.user.username }}!
+
+Ваш заказ №{{ order.pk }} принят и ожидает оплаты.
+
+Состав заказа:
+{% for item in items %}  • {{ item.product.name }} — {{ item.quantity }} × {{ item.price|money }} = {{ item.line_total|money }}
+{% endfor %}
+Итого: {{ order.total_price|money }}
+Способ оплаты: {{ order.get_payment_method_display }}
+Адрес доставки: {{ order.shipping_address }}
+
+Спасибо за покупку!
+Hop & Barley
+{% endautoescape %}

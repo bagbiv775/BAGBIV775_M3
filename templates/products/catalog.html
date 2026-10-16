@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static shop_tags %}
+
+{% block title %}Каталог{% endblock %}
+
+{% block content %}
+<section class="hero-banner">
+    <img src="{% static 'img/background/hopfen-fields.jpg' %}" alt="" class="hero-banner__image">
+    <div class="hero-banner__overlay"></div>
+</section>
+
+<form method="get" action="{% url 'products:catalog' %}" class="container main-content-grid">
+    <aside class="sidebar filter-menu">
+        <div class="sidebar__section">
+            <h3 class="section-title">Категория</h3>
+            <div class="checkbox-group">
+                {% for radio in filter_form.category %}
+                    <label class="checkbox-container">{{ radio.choice_label }}
+                        {{ radio.tag }}
+                        <span class="checkmark"></span>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="sidebar__section">
+            <h3 class="section-title">Цена, $</h3>
+            <div class="price-range">
+                {{ filter_form.min_price }}
+                <span>—</span>
+                {{ filter_form.max_price }}
+            </div>
+            {% for error in filter_form.non_field_errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            {% for error in filter_form.min_price.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            {% for error in filter_form.max_price.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+        </div>
+
+        <input type="hidden" name="sort" value="{{ current_sort }}">
+        <div class="sidebar__section sidebar__actions">
+            <button type="submit" class="button button--primary">Применить</button>
+            <a href="{% url 'products:catalog' %}" class="button button--secondary">Сбросить</a>
+        </div>
+    </aside>
+
+    <section class="products-area product-grid-section">
+        <div class="search-sort-bar">
+            <div class="search-input-wrapper">
+                <input type="search" name="q" value="{{ filter_form.q.value|default:'' }}" placeholder="Поиск по названию и описанию" class="search-input" aria-label="Поиск">
+                <button type="submit" class="search-button" aria-label="Найти">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+            <div class="sort-options">
+                {% for value, label in sort_choices %}
+                    <a href="{% querystring sort=value page=None %}" class="sort-button{% if value == current_sort %} active-sort{% endif %}">{{ label }}</a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <p class="results-count">Найдено товаров: {{ paginator.count }}</p>
+
+        {% if products %}
+            <div class="product-grid">
+                {% for product in products %}
+                    <a href="{{ product.get_absolute_url }}" class="product-card-link">
+                        <div class="product-card">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-card__image" loading="lazy">
+                            {% else %}
+                                <div class="product-card__image product-card__image--placeholder"><i class="fa-solid fa-wheat-awn"></i></div>
+                            {% endif %}
+                            <div class="product-card__info">
+                                <h4 class="product-card__name">{{ product.name }}</h4>
+                                <p class="product-card__price">{{ product.price|money }}</p>
+                                <p class="product-card__meta">
+                                    {% include 'includes/rating.html' with rating=product.avg_rating %}
+                                    <span class="product-card__category">{{ product.category.name }}</span>
+                                </p>
+                                {% if product.stock <= 0 %}<p class="stock-badge stock-badge--out">Нет в наличии</p>{% endif %}
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <p>По вашему запросу ничего не найдено.</p>
+                <a href="{% url 'products:catalog' %}" class="button button--secondary">Показать все товары</a>
+            </div>
+        {% endif %}
+
+        {% include 'includes/pagination.html' %}
+    </section>
+</form>
+{% endblock %}

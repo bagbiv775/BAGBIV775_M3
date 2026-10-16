@@ -1,0 +1,18 @@
+{% load shop_tags %}<table class="data-table">
+    <thead>
+        <tr><th>Товар</th><th>Цена</th><th>Кол-во</th><th>Сумма</th></tr>
+    </thead>
+    <tbody>
+        {% for item in order.items.all %}
+            <tr>
+                <td>{% if item.product.is_active %}<a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a>{% else %}{{ item.product.name }}{% endif %}</td>
+                <td>{{ item.price|money }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.line_total|money }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr><th colspan="3">Итого</th><th>{{ order.total_price|money }}</th></tr>
+    </tfoot>
+</table>
